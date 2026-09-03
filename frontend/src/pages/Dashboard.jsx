@@ -27,7 +27,7 @@ function Dashboard() {
     }
 
     // Get authorized Zoho applications
-    fetch("http://localhost:5000/api/apps", {
+    fetch(`${import.meta.env.VITE_API_URL}/api/apps`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -84,7 +84,7 @@ function Dashboard() {
       setError("");
 
       const response = await fetch(
-        "http://localhost:5000/api/admin/users",
+        `${import.meta.env.VITE_API_URL}/api/admin/users`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -111,7 +111,7 @@ function Dashboard() {
       setError("");
 
       const response = await fetch(
-        "http://localhost:5000/api/admin/roles",
+        `${import.meta.env.VITE_API_URL}/api/admin/roles`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -138,7 +138,7 @@ function Dashboard() {
       setError("");
 
       const response = await fetch(
-        "http://localhost:5000/api/admin/audit-logs",
+        `${import.meta.env.VITE_API_URL}/api/admin/audit-logs`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
