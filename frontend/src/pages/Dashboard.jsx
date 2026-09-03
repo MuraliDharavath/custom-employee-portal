@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import "./Dashboard.css";
 
+const API_URL = "https://custom-employee-portal-rrim.onrender.com";
+
 function Dashboard() {
   const [apps, setApps] = useState([]);
   const [users, setUsers] = useState([]);
@@ -23,11 +25,16 @@ function Dashboard() {
     const storedUser = localStorage.getItem("user");
 
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (error) {
+        console.error("Failed to read user data:", error);
+        localStorage.removeItem("user");
+      }
     }
 
     // Get authorized Zoho applications
-    fetch(`${import.meta.env.VITE_API_URL}/api/apps`, {
+    fetch(`${API_URL}/api/apps`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -47,11 +54,12 @@ function Dashboard() {
         setApps(data.applications || []);
       })
       .catch((error) => {
+        console.error("Applications error:", error);
         setError(error.message);
       });
 
     // Check Zoho OAuth connection
-    fetch("http://localhost:5000/api/apps/zoho-status", {
+    fetch(`${API_URL}/api/apps/zoho-status`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -71,6 +79,8 @@ function Dashboard() {
         setZohoStatus(data);
       })
       .catch((error) => {
+        console.error("Zoho status error:", error);
+
         setZohoStatus({
           connected: false,
           message: error.message,
@@ -84,7 +94,7 @@ function Dashboard() {
       setError("");
 
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/admin/users`,
+        `${API_URL}/api/admin/users`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -95,12 +105,15 @@ function Dashboard() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Failed to load users");
+        throw new Error(
+          data.message || "Failed to load users"
+        );
       }
 
       setUsers(data.users || []);
       setActiveSection("users");
     } catch (error) {
+      console.error("Users error:", error);
       setError(error.message);
     }
   };
@@ -111,7 +124,7 @@ function Dashboard() {
       setError("");
 
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/admin/roles`,
+        `${API_URL}/api/admin/roles`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -122,12 +135,15 @@ function Dashboard() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Failed to load roles");
+        throw new Error(
+          data.message || "Failed to load roles"
+        );
       }
 
       setRoles(data.roles || []);
       setActiveSection("roles");
     } catch (error) {
+      console.error("Roles error:", error);
       setError(error.message);
     }
   };
@@ -138,7 +154,7 @@ function Dashboard() {
       setError("");
 
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/admin/audit-logs`,
+        `${API_URL}/api/admin/audit-logs`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -157,6 +173,7 @@ function Dashboard() {
       setLogs(data.logs || []);
       setActiveSection("logs");
     } catch (error) {
+      console.error("Audit logs error:", error);
       setError(error.message);
     }
   };
@@ -218,11 +235,17 @@ function Dashboard() {
 
           {user?.role === "Admin" && (
             <>
-              <button onClick={loadUsers}>Users</button>
+              <button onClick={loadUsers}>
+                Users
+              </button>
 
-              <button onClick={loadRoles}>Roles</button>
+              <button onClick={loadRoles}>
+                Roles
+              </button>
 
-              <button onClick={loadLogs}>Audit Logs</button>
+              <button onClick={loadLogs}>
+                Audit Logs
+              </button>
             </>
           )}
         </div>
@@ -231,7 +254,10 @@ function Dashboard() {
         {activeSection === "apps" && (
           <div className="app-grid">
             {apps.map((app) => (
-              <div className="app-card" key={app.permission}>
+              <div
+                className="app-card"
+                key={app.permission}
+              >
                 <div className="app-icon">
                   {app.name.charAt(5)}
                 </div>

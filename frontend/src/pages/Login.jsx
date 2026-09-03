@@ -11,16 +11,19 @@ function Login() {
     setError("");
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      });
+      const response = await fetch(
+        "https://custom-employee-portal-rrim.onrender.com/api/auth/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+            password,
+          }),
+        }
+      );
 
       const data = await response.json();
 
@@ -29,11 +32,14 @@ function Login() {
         return;
       }
 
+      // Store authentication information
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
+      // Redirect to dashboard
       window.location.href = "/dashboard";
     } catch (error) {
+      console.error("Login error:", error);
       setError("Unable to connect to server");
     }
   };
@@ -42,6 +48,7 @@ function Login() {
     <div className="login-container">
       <div className="login-card">
         <h1>Employee Portal</h1>
+
         <p>Sign in to continue</p>
 
         <form onSubmit={handleLogin}>
