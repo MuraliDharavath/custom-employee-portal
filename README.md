@@ -138,8 +138,7 @@ Role-based access control
 Backend-only Zoho credentials
 Audit logging
 Environment variables for secrets
-Author
 
+Author:
 Murali Dharavath
-
 B.Tech – Artificial Intelligence & Data Science
